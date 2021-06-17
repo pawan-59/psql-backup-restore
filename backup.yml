@@ -1,0 +1,37 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: postgres-backup-cron-job
+spec:
+  schedule: "0 3 * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: postgres-backup-cron-job
+            image: sparrow59/psql-backup-restore:v1
+            env:
+            - name: PASS
+              value: "pg_password"
+            - name: HOST
+              value: "host" 
+            - name: USER
+              value: "database_user"
+            - name: PORT
+              value: "pot_no"
+            - name: S3_BUCKET
+              value: "s3://interview-12345"
+            - name: AWS_ACCESS_KEY_ID
+              value: "your_access_key"
+            - name: AWS_SECRET_ACCESS_KEY
+              value: "your_secret_key"
+            - name: AWS_DEFAULT_REGION
+              value: "region"
+            imagePullPolicy: Always
+            args:
+            - /bin/bash
+            - -c
+            - bash backup.sh;
+          restartPolicy: OnFailure
+      backoffLimit: 3

@@ -1,0 +1,38 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: postgres-app-restore-job
+spec:
+  template:
+    spec:
+      containers:
+      - name: postgres-app-restore-job
+        image: sparrow59/psql-backup-restore:v1
+        env:
+          - name: PASS
+            value: "pg_password"
+          - name: HOST
+            value: "host" 
+          - name: USER
+            value: "database_user"
+          - name: PORT
+            value: "port_no"
+          - name: S3_BUCKET
+            value: "s3://interview-12345"
+          - name: AWS_ACCESS_KEY_ID
+            value: "Your_access_key"
+          - name: AWS_SECRET_ACCESS_KEY
+            value: "Your_secret_key"
+          - name: AWS_DEFAULT_REGION
+            value: "region"
+          - name: BUCKET_FILE
+            value: "backup_file_name"
+        imagePullPolicy: Always
+        args:
+        - /bin/bash
+        - -c
+        - bash restore.sh;
+      volumes:
+        - name: cache-volume
+          emptyDir: {}
+      restartPolicy: OnFailure
